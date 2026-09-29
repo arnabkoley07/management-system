@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { UserCheck, Lock, Mail, User, AlertCircle, ArrowRight } from 'lucide-react';
+import { UserCheck, Lock, Mail, User, AlertCircle, ArrowRight, Eye, EyeOff } from 'lucide-react';
 
 const API_BASE = '/api/auth';
 
@@ -9,12 +9,14 @@ export const AuthPage = ({ onAuthSuccess }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+
     // Client-side validations
     if (!email.trim() || !password.trim()) {
       setError('Please fill in all required fields.');
@@ -79,8 +81,8 @@ export const AuthPage = ({ onAuthSuccess }) => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-white rounded-2xl border border-slate-200 shadow-sm p-8">
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 font-sans">
+      <div className="w-full max-w-md bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8">
         {/* Header Branding */}
         <div className="text-center mb-6">
           <div className="w-12 h-12 rounded-xl bg-indigo-600 text-white flex items-center justify-center mx-auto mb-3 shadow-xs">
@@ -102,8 +104,8 @@ export const AuthPage = ({ onAuthSuccess }) => {
               setIsLogin(true);
               setError('');
             }}
-            className={`flex-1 py-2 rounded-lg transition-all ${
-              isLogin ? 'bg-white text-indigo-700 shadow-xs' : 'hover:text-slate-900'
+            className={`flex-1 py-2 rounded-lg transition-all cursor-pointer ${
+              isLogin ? 'bg-white text-indigo-700 shadow-xs font-bold' : 'hover:text-slate-900'
             }`}
           >
             Sign In
@@ -114,8 +116,8 @@ export const AuthPage = ({ onAuthSuccess }) => {
               setIsLogin(false);
               setError('');
             }}
-            className={`flex-1 py-2 rounded-lg transition-all ${
-              !isLogin ? 'bg-white text-indigo-700 shadow-xs' : 'hover:text-slate-900'
+            className={`flex-1 py-2 rounded-lg transition-all cursor-pointer ${
+              !isLogin ? 'bg-white text-indigo-700 shadow-xs font-bold' : 'hover:text-slate-900'
             }`}
           >
             Sign Up
@@ -178,13 +180,20 @@ export const AuthPage = ({ onAuthSuccess }) => {
             <div className="relative">
               <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-3 pointer-events-none" />
               <input
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 required
                 placeholder={isLogin ? 'Enter your password' : 'At least 6 characters'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full pl-9 pr-10 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 cursor-pointer"
+              >
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
             </div>
           </div>
 
@@ -212,7 +221,7 @@ export const AuthPage = ({ onAuthSuccess }) => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full mt-2 py-2.5 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 disabled:opacity-50 text-white text-sm font-semibold rounded-lg shadow-xs transition-colors flex items-center justify-center gap-1.5"
+            className="w-full mt-2 py-2.5 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 disabled:opacity-50 text-white text-sm font-semibold rounded-lg shadow-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
           >
             <span>{loading ? 'Processing...' : isLogin ? 'Sign In' : 'Create Account'}</span>
             <ArrowRight className="w-4 h-4" />
@@ -230,7 +239,7 @@ export const AuthPage = ({ onAuthSuccess }) => {
                   setIsLogin(false);
                   setError('');
                 }}
-                className="text-indigo-600 font-semibold hover:underline"
+                className="text-indigo-600 font-semibold hover:underline cursor-pointer"
               >
                 Sign up here
               </button>
@@ -244,7 +253,7 @@ export const AuthPage = ({ onAuthSuccess }) => {
                   setIsLogin(true);
                   setError('');
                 }}
-                className="text-indigo-600 font-semibold hover:underline"
+                className="text-indigo-600 font-semibold hover:underline cursor-pointer"
               >
                 Sign in here
               </button>
