@@ -33,19 +33,34 @@ app.use('/api/auth', authRoutes);
 app.use('/api/visitors', visitorRoutes);
 
 // Health check endpoint
-app.get('/', (req, res) => {
-  res.json({
-    message: 'Visitor Registration API is running',
-    database: dbStatus,
-  });
-});
-
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',
     database: dbStatus,
   });
 });
+
+// Serve frontend static files in production if dist exists
+const path = require('path');
+const fs = require('fs');
+const distPath = path.join(__dirname, '../frontend/dist');
+
+if (fs.existsSync(distPath)) {
+  app.use(express.static(distPath));
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api')) {
+      return next();
+    }
+    res.sendFile(path.join(distPath, 'index.html'));
+  });
+} else {
+  app.get('/', (req, res) => {
+    res.json({
+      message: 'Visitor Registration API is running',
+      database: dbStatus,
+    });
+  });
+}
 
 // 404 handler for unmatched routes - always returns JSON
 app.use((req, res) => {
